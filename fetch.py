@@ -2,9 +2,14 @@ import os , json
 
 os.makedirs('Movies',exist_ok=True)
 os.makedirs('Posters',exist_ok=True)
-movies_Foloder = os.listdir('Movies')
-series_folder = os.listdir('Series')
-posters = os.listdir('Posters')
+os.makedirs('Series', exist_ok=True)
+
+def get_files(path):
+    return [file for file in os.listdir(path) if file != ".gitkeep"]
+
+movies_Foloder = get_files('Movies')
+series_folder = get_files('Series')
+posters = get_files('Posters')
 posters = [f"Posters/{x}" for x in posters]
 
 movies = []
