@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Name</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="player.css">
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">
+      <div class="logoBox">
+        <div class="logo">
+          <img src="site_media/logo.png" />
+        </div>
+        <h1>StreamBee</h1>
+      </div>
+    </a>
+    <ul>
+      <li><a href="#">Movies</a></li>
+      <li><a href="#">Web Series</a></li>
+      <li><a href="#">Movies Series</a></li>
+      <li><a href="#">Wishlist</a></li>
+    </ul>
+  </header>
+  <main>
+    <div class="videoBox">
+      <video preload="metadata" id="video">
+        <source src="yourvideo.mp4" type="video/mp4">
+      </video>
+      <div class="loading" id="loadingSpinner"></div>
+      <div class="controls show">
+        <div class="seekbarBox">
+          <input type="range" id="seekbar" value="0" min="0">
+          <div>
+            <p id="currentDurationLabel">--:--</p>
+            <p id="totalDurationLabel">--:--</p>
+          </div>
+        </div>
+        <div class="playbackControls">
+          <div class="volumeControls">
+            <button class="volumeBtn" id="volumeBtn">
+              <img src="site_media/volume-low-solid-full.svg" alt="" id="volumeIcon">
+            </button>
+            <input type="range" id="volumeSeekBar" max="100">
+          </div>
+          <div class="transportControls">
+            <button id="backwardBtn">
+              <img src="site_media/forward icon.svg" alt="" style="transform: rotateY(180deg);"
+>
+            </button>
+            <button id="playBtn">
+              <img id="playIcon" src="site_media/play-solid-full.svg" alt="">
+            </button>
+            <button id="forwardBtn">
+              <img src="site_media/forward icon.svg" alt="">
+            </button>
+          </div>
+          <div class="otherControls">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="playlistBox">
+    </div>
+  </main>
+  <script src="player.js"></script>
+</body>
+
+</html>
