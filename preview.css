@@ -59,6 +59,13 @@ body {
     display: none;
 }
 
+.statusBar input[type="range"]::-moz-range-thumb {
+    -moz-appearance: none;
+    display: none;
+    height: 0;
+    width: 0;
+}
+
 .data .watchBtn {
     width: 250px;
     background-color: white;

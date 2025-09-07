@@ -55,6 +55,7 @@ main {
 .seekbarBox div {
     width: 95%;
     margin: auto;
+    margin-top: 2px;
     display: flex;
     justify-content: space-between;
 }
@@ -119,14 +120,23 @@ main {
 .volumeControls {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+}
+
+.volumeControls:hover.volumeControls input{
+    opacity: 1;
+    width: 150px;
 }
 
 .volumeControls input {
     -webkit-appearance: none;
-    width: 150px;
+    width: 0;
     height: 5px;
     border-radius: 10px;
+    transition: width 300ms ease;
+    opacity: 0;
+    outline: none;
+    border: none;
 }
 
 .volumeControls input::-webkit-slider-thumb {
@@ -138,8 +148,23 @@ main {
     cursor: pointer;
 }
 
+.volumeControls input::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.transportControls{
+    display: flex;
+    justify-content: center;
+}
+
 .transportControls button,
-.volumeBtn {
+.volumeBtn,.otherControls button {
+    border: none;
     width: 40px;
     height: 40px;
     margin: 3px;
@@ -147,18 +172,26 @@ main {
     border: none;
     cursor: pointer;
     transition: all 200ms ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
-.transportControls button:active {
+.transportControls button:active,#fullscreenBtn:active {
     scale: 0.95;
 }
 
 .transportControls button img,
-.volumeBtn img {
+.volumeBtn img,.otherControls button img {
     width: 80%;
     height: 80%;
     pointer-events: none;
+}
+
+.otherControls{
+    display: flex;
+    justify-content: space-between;
 }
 
 .loading {

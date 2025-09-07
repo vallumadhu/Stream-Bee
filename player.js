@@ -13,6 +13,8 @@ const forwardBtn = document.getElementById("forwardBtn")
 const volumeSeekBar = document.getElementById("volumeSeekBar")
 const volumeBtn = document.getElementById("volumeBtn")
 const volumeIcon = document.getElementById("volumeIcon")
+const fullscreenBtn = document.getElementById("fullscreenBtn")
+const fullscreenIcon = document.getElementById("fullscreenIcon")
 let autoplay = true;
 
 
@@ -64,6 +66,15 @@ function formatTime(seconds, showHours = true) {
     }
 }
 
+function updateVolumeIcon(volumeLevel) {
+    if (volumeLevel == 0 && volumeIcon.src.indexOf("site_media/volume-xmark-solid-full.svg") == -1) {
+        volumeIcon.src = "site_media/volume-xmark-solid-full.svg"
+    } else if ((volumeLevel > 0 && volumeLevel < 50) && volumeIcon.src.indexOf("site_media/volume-low-solid-full.svg") == -1) {
+        volumeIcon.src = "site_media/volume-low-solid-full.svg"
+    } else if (volumeLevel >= 50 && volumeIcon.src.indexOf("site_media/volume-high-solid-full.svg") == -1) {
+        volumeIcon.src = "site_media/volume-high-solid-full.svg"
+    }
+}
 
 
 
@@ -172,12 +183,12 @@ seekbar.addEventListener("input", (e) => {
 /* Other Controls */
 
 backwardBtn.addEventListener("click", () => {
-    let updatedTime = video.currentTime - 30
+    let updatedTime = video.currentTime - 10
     video.currentTime = (updatedTime >= 0) ? updatedTime : 0
 })
 
 forwardBtn.addEventListener("click", () => {
-    let updatedTime = video.currentTime + 30
+    let updatedTime = video.currentTime + 10
     video.currentTime = (updatedTime <= video.duration) ? updatedTime : video.duration
 })
 
@@ -186,18 +197,15 @@ localStorage.setItem("volume", volumeLevel)
 volumeSeekBar.value = volumeLevel;
 volumeSeekBar.style.backgroundImage = `linear-gradient(to right, white ${volumeLevel}%, #d3d3d3 ${volumeLevel}%)`
 video.volume = volumeLevel / 100;
+updateVolumeIcon(volumeLevel)
 
 volumeSeekBar.addEventListener("input", () => {
     volumeLevel = volumeSeekBar.value
     volumeSeekBar.style.backgroundImage = `linear-gradient(to right, white ${volumeLevel}%, #d3d3d3 ${volumeLevel}%)`
     video.volume = (volumeLevel) / 100
     localStorage.setItem("volume", volumeLevel)
-    if (volumeLevel == 0 && volumeIcon.src.indexOf("volume-xmark-solid-full.svg") == -1) {
+    updateVolumeIcon(volumeLevel)
 
-        volumeIcon.src = "site_media/volume-xmark-solid-full.svg"
-    } else if (volumeLevel > 0 && volumeIcon.src.indexOf("volume-low-solid-full.svg") == -1) {
-        volumeIcon.src = "site_media/volume-low-solid-full.svg"
-    }
 })
 
 volumeBtn.addEventListener("click", () => {
@@ -207,6 +215,41 @@ volumeBtn.addEventListener("click", () => {
     localStorage.setItem("volume", 0)
     volumeIcon.src = "site_media/volume-xmark-solid-full.svg"
 })
+
+
+/* Full Screen Settings */
+fullscreenBtn.addEventListener("click", () => {
+    if (!document.fullscreenElement) {
+        if (videoBox.requestFullscreen) {
+            videoBox.requestFullscreen();
+        } else if (videoBox.mozRequestFullScreen) {
+            videoBox.mozRequestFullScreen();
+        } else if (videoBox.webkitRequestFullscreen) {
+            videoBox.webkitRequestFullscreen();
+        } else if (videoBox.msRequestFullscreen) {
+            videoBox.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+})
+
+document.addEventListener("fullscreenchange", () => {
+    if (document.fullscreenElement) {
+        fullscreenIcon.src = "site_media/compress-solid-full.svg"
+    } else {
+        fullscreenIcon.src = "site_media/expand-solid-full.svg"
+    }
+});
+
 
 
 
