@@ -24,10 +24,11 @@ function formatTime(seconds) {
 }
 
 function urlTrim(url) {
-    url = url.split(".")[0];
-    url = url.split("/");
-    url = url[url.length - 1];
-    return url;
+  url = url.split(".");
+  url = url[url.length-2]
+  url = url.split("/");
+  url = url[url.length - 1];
+  return url;
 }
 
 
@@ -96,7 +97,7 @@ if (series) {
                 log[name][2] = 0
                 localStorage.setItem("log", JSON.stringify(log))
             }
-            window.location.href = "movie_player.html"
+            window.location.href = "./movie_player.html"
         })
     }
 } else {
@@ -129,5 +130,5 @@ watchBtn.addEventListener("click", () => {
     }
     localStorage.setItem("currentURL", currentURL)
 
-    window.location.href = "movie_player.html"
+    window.location.href = "./movie_player.html"
 })

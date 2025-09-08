@@ -8,7 +8,8 @@ let series_snippts = []
 /* Functions */
 
 function urlTrim(url) {
-  url = url.split(".")[0];
+  url = url.split(".");
+  url = url[url.length-2]
   url = url.split("/");
   url = url[url.length - 1];
   return url;
@@ -20,8 +21,9 @@ function getPoster(name) {
       return dataset.poster[i];
     }
   }
-  return "Posters/default.png";
+  return "../Posters/default.png";
 }
+
 
 function selectCard(name, url, poster, series) {
   series = JSON.parse(series)
@@ -29,7 +31,7 @@ function selectCard(name, url, poster, series) {
   localStorage.setItem("poster", poster)
   localStorage.setItem("url", url)
   localStorage.setItem("series", series)
-  window.location.href = "preview.html"
+  window.location.href = "./preview.html"
 }
 
 

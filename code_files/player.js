@@ -43,7 +43,8 @@ function updateSeekbar() {
 }
 
 function urlTrim(url) {
-    url = url.split(".")[0];
+    url = url.split(".");
+    url = url[url.length - 2]
     url = url.split("/");
     url = url[url.length - 1];
     return url;
@@ -76,7 +77,53 @@ function updateVolumeIcon(volumeLevel) {
     }
 }
 
+function playPause() {
+    if (isPlaying) {
+        video.pause()
+        playIcon.src = "site_media/play-solid-full.svg"
+        isPlaying = false
+    } else {
+        video.play()
+        playIcon.src = "site_media/pause-solid-full.svg"
+        isPlaying = true
+    }
+}
 
+function fullscreen(){
+    if (!document.fullscreenElement) {
+        if (videoBox.requestFullscreen) {
+            videoBox.requestFullscreen();
+        } else if (videoBox.mozRequestFullScreen) {
+            videoBox.mozRequestFullScreen();
+        } else if (videoBox.webkitRequestFullscreen) {
+            videoBox.webkitRequestFullscreen();
+        } else if (videoBox.msRequestFullscreen) {
+            videoBox.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+}
+
+function updatePlaybackRate(x){
+    video.playbackRate = x
+}
+
+function mute(){
+        volumeSeekBar.value = 0
+    video.volume = 0
+    volumeSeekBar.style.backgroundImage = `linear-gradient(to right, white ${0}%, #d3d3d3 ${0}%)`
+    localStorage.setItem("volume", 0)
+    volumeIcon.src = "site_media/volume-xmark-solid-full.svg"
+}
 
 
 /*local Storage*/
@@ -98,7 +145,7 @@ if (!logExits) {
     if (series) {
         log[name] = [videoUrl, 0, 0]
     } else {
-        log[name] = [0]
+        log[name] = [0, 0]
     }
     localStorage.setItem("log", JSON.stringify(log))
 }
@@ -114,17 +161,12 @@ playIcon.src = "site_media/pause-solid-full.svg"
 
 video.onloadedmetadata = () => {
     seekbar.max = video.duration
-    video.currentTime = (series) ? log[name][2] : log[name][1]
-    console.log(video.currentTime)
+    let currentTime = (series) ? log[name][2] : log[name][1]
+    video.currentTime = currentTime
     totalDurationLabel.innerHTML = formatTime(video.duration)
     setInterval(() => {
         updateSeekbar()
     }, 800)
-    if (video.textTracks.length === 0) {
-        console.log("No subtitles available for this video.");
-    } else {
-        console.log("Subtitles found!");
-    }
 }
 
 loadingSpinner.style.display = "block"
@@ -134,15 +176,7 @@ video.addEventListener("canplay", () => {
 
 /* Play Pause Controls */
 videoBox.addEventListener("click", () => {
-    if (isPlaying) {
-        video.pause()
-        playIcon.src = "site_media/play-solid-full.svg"
-        isPlaying = false
-    } else {
-        video.play()
-        playIcon.src = "site_media/pause-solid-full.svg"
-        isPlaying = true
-    }
+    playPause()
 })
 
 videoBox.addEventListener("mouseover", () => {
@@ -157,14 +191,34 @@ controls.addEventListener("click", (e) => {
     e.stopPropagation();
 });
 playBtn.addEventListener("click", (e) => {
-    if (isPlaying) {
-        video.pause()
-        playIcon.src = "site_media/play-solid-full.svg"
-        isPlaying = false
-    } else {
-        video.play()
-        playIcon.src = "site_media/pause-solid-full.svg"
-        isPlaying = true
+    playPause()
+})
+
+document.addEventListener("keydown", (e) => {
+    let keyCode = e.keyCode
+    if (keyCode == 32 || keyCode ==75) {
+        event.preventDefault()
+        playPause()
+    } else if (keyCode == 37) {
+        let updatedTime = video.currentTime - 5
+        video.currentTime = (updatedTime >= 0) ? updatedTime : 0
+    } else if (keyCode == 39) {
+        let updatedTime = video.currentTime + 5
+        video.currentTime = (updatedTime <= video.duration) ? updatedTime : video.duration
+    } else if( keyCode == 70){
+        fullscreen()
+    } else if( keyCode == 74){
+        let updatedTime = video.currentTime - 10
+        video.currentTime = (updatedTime >= 0) ? updatedTime : 0
+    }else if(keyCode == 76){
+        let updatedTime = video.currentTime + 10
+        video.currentTime = (updatedTime <= video.duration) ? updatedTime : video.duration
+    }else if(keyCode == 77){
+        mute()
+    }else if(keyCode === 190 && event.shiftKey){
+        video.playbackRate+=0.25
+    }else if(keyCode === 188 && event.shiftKey){
+        video.playbackRate-=0.25
     }
 })
 
@@ -209,37 +263,13 @@ volumeSeekBar.addEventListener("input", () => {
 })
 
 volumeBtn.addEventListener("click", () => {
-    volumeSeekBar.value = 0
-    video.volume = 0
-    volumeSeekBar.style.backgroundImage = `linear-gradient(to right, white ${0}%, #d3d3d3 ${0}%)`
-    localStorage.setItem("volume", 0)
-    volumeIcon.src = "site_media/volume-xmark-solid-full.svg"
+    mute()
 })
 
 
 /* Full Screen Settings */
 fullscreenBtn.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-        if (videoBox.requestFullscreen) {
-            videoBox.requestFullscreen();
-        } else if (videoBox.mozRequestFullScreen) {
-            videoBox.mozRequestFullScreen();
-        } else if (videoBox.webkitRequestFullscreen) {
-            videoBox.webkitRequestFullscreen();
-        } else if (videoBox.msRequestFullscreen) {
-            videoBox.msRequestFullscreen();
-        }
-    } else {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
-    }
+    fullscreen()
 })
 
 document.addEventListener("fullscreenchange", () => {
