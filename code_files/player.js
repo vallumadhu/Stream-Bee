@@ -15,11 +15,17 @@ const volumeBtn = document.getElementById("volumeBtn")
 const volumeIcon = document.getElementById("volumeIcon")
 const fullscreenBtn = document.getElementById("fullscreenBtn")
 const fullscreenIcon = document.getElementById("fullscreenIcon")
-let autoplay = true;
-
-
-
-
+const leftIcon = document.querySelector(".left")
+const centreIcon = document.querySelector(".centre")
+const rightIcon = document.querySelector(".right")
+const captionBtn = document.getElementById("captionBtn")
+const captionImg = document.getElementById("captionImg")
+const settingBtn = document.getElementById("settingBtn")
+let subtitles = []
+let currentSubtitleLabel = null
+let subtitleState = false
+let subtitlesLoaded = false
+let autoplay = true
 
 /*functions*/
 function updateSeekbar() {
@@ -89,7 +95,7 @@ function playPause() {
     }
 }
 
-function fullscreen(){
+function fullscreen() {
     if (!document.fullscreenElement) {
         if (videoBox.requestFullscreen) {
             videoBox.requestFullscreen();
@@ -113,18 +119,108 @@ function fullscreen(){
     }
 }
 
-function updatePlaybackRate(x){
+function updatePlaybackRate(x) {
     video.playbackRate = x
 }
 
-function mute(){
-        volumeSeekBar.value = 0
+function mute() {
+    volumeSeekBar.value = 0
     video.volume = 0
     volumeSeekBar.style.backgroundImage = `linear-gradient(to right, white ${0}%, #d3d3d3 ${0}%)`
     localStorage.setItem("volume", 0)
     volumeIcon.src = "site_media/volume-xmark-solid-full.svg"
 }
 
+function addSubtitleTrack(video, subtitleURL, subtitleName) {
+    const track = document.createElement("track");
+    track.kind = "subtitles"
+    track.label = subtitleName
+    track.src = subtitleURL
+    video.appendChild(track)
+}
+
+
+function getSubtitles(video_path) {
+
+    let lastDotIndex = video_path.lastIndexOf(".")
+    video_path = video_path.slice(0, lastDotIndex)
+    video_path = video_path.slice(2, video_path.length)
+    video_path = "subtitles" + video_path
+
+    let subtitlesList = dataset['subtitles']
+    let videoSubtitles = []
+    for (let i = 0; i < subtitlesList.length; i++) {
+        let subtitleURL = subtitlesList[i]
+        if (subtitleURL.includes(video_path)) {
+            let parts = subtitleURL.split("/");
+            let subtitleName = parts[parts.length - 1];
+            lastDotIndex = subtitleName.lastIndexOf(".")
+            subtitleName = subtitleName.slice(0, lastDotIndex)
+            videoSubtitles.push([subtitleName, subtitlesList[i]])
+        }
+    }
+    return videoSubtitles
+}
+
+function switchSubtitle(video, subtitleName) {
+    for (let i = 0; i < video.textTracks.length; i++) {
+        video.textTracks[i].mode = video.textTracks[i].label == subtitleName ? "showing" : "disabled";
+    }
+}
+
+function offSubttiles(video) {
+    for (let i = 0; i < video.textTracks.length; i++) {
+        video.textTracks[i].mode = "disabled"
+    }
+}
+
+
+function clearSubtitleTracks(video) {
+    offSubttiles(video)
+    const tracks = video.querySelectorAll("track")
+    for (let i = 0; i < tracks.length; i++) {
+        let track = tracks[i]
+        track.remove()
+    }
+}
+
+function initSubtitles(videoUrl) {
+    let videoSubtitles = getSubtitles(videoUrl)
+    subtitles = []
+    for (let i = 0; i < videoSubtitles.length; i++) {
+        let subtitleName = videoSubtitles[i][0]
+        let subtitleURL = videoSubtitles[i][1]
+        subtitles.push(subtitleName)
+        addSubtitleTrack(video, subtitleURL, subtitleName)
+        subtitlesLoaded = true
+    }
+    if(!currentSubtitleLabel){
+        currentSubtitleLabel = subtitles[0]
+    }
+    if (subtitleState) {
+        switchSubtitle(video, currentSubtitleLabel)
+    }
+}
+
+
+let centreIconTimeout = null
+let rightIconTimeout = null
+let leftIconTimeout = null
+function displayIcon(icon, content, duration) {
+    if (icon == rightIcon && rightIconTimeout) {
+        clearInterval(rightIconTimeout)
+    } else if (icon == leftIcon && leftIconTimeout) {
+        clearInterval(leftIconTimeout)
+    } else if (icon == centreIcon && centreIconTimeout) {
+        clearInterval(centreIconTimeout)
+    }
+    icon.style.opacity = "1"
+    icon.innerHTML = content
+    setTimeout(() => {
+        icon.style.opacity = "0"
+        icon.innerHTML = "&nbsp;&nbsp;&nbsp;"
+    }, duration)
+}
 
 /*local Storage*/
 const name = localStorage.getItem("name");
@@ -149,8 +245,6 @@ if (!logExits) {
     }
     localStorage.setItem("log", JSON.stringify(log))
 }
-
-
 
 
 /*Video Player*/
@@ -196,32 +290,42 @@ playBtn.addEventListener("click", (e) => {
 
 document.addEventListener("keydown", (e) => {
     let keyCode = e.keyCode
-    if (keyCode == 32 || keyCode ==75) {
+    if (keyCode == 32 || keyCode == 75) {
         event.preventDefault()
         playPause()
     } else if (keyCode == 37) {
         let updatedTime = video.currentTime - 5
         video.currentTime = (updatedTime >= 0) ? updatedTime : 0
+        displayIcon(leftIcon, "<p>-5s</p>", 1000)
     } else if (keyCode == 39) {
         let updatedTime = video.currentTime + 5
         video.currentTime = (updatedTime <= video.duration) ? updatedTime : video.duration
-    } else if( keyCode == 70){
+        displayIcon(rightIcon, "<p>+5s</p>", 1000)
+    } else if (keyCode == 70) {
         fullscreen()
-    } else if( keyCode == 74){
+    } else if (keyCode == 74) {
         let updatedTime = video.currentTime - 10
         video.currentTime = (updatedTime >= 0) ? updatedTime : 0
-    }else if(keyCode == 76){
+        displayIcon(leftIcon, "<p>-10s</p>", 2000)
+    } else if (keyCode == 76) {
         let updatedTime = video.currentTime + 10
         video.currentTime = (updatedTime <= video.duration) ? updatedTime : video.duration
-    }else if(keyCode == 77){
+        displayIcon(rightIcon, "<p>+10s</p>", 2000)
+    } else if (keyCode == 77) {
         mute()
-    }else if(keyCode === 190 && event.shiftKey){
-        video.playbackRate+=0.25
-    }else if(keyCode === 188 && event.shiftKey){
-        video.playbackRate-=0.25
+        displayIcon(centreIcon, "<p>0%</p>", 2000)
+    } else if (keyCode === 190 && event.shiftKey) {
+        video.playbackRate += 0.25
+        displayIcon(centreIcon, `<p>${video.playbackRate}x</p>`, 2000)
+    } else if (keyCode === 188 && event.shiftKey) {
+        video.playbackRate -= 0.25
+        displayIcon(centreIcon, `<p>${video.playbackRate}x</p>`, 2000)
+    } else if (keyCode >= 96 && keyCode <= 105) {
+        let ratio = (keyCode - 96) * 0.1
+        let updatedTime = video.duration * ratio
+        video.currentTime = updatedTime
     }
 })
-
 
 
 /* Seekbar Control */
@@ -239,11 +343,13 @@ seekbar.addEventListener("input", (e) => {
 backwardBtn.addEventListener("click", () => {
     let updatedTime = video.currentTime - 10
     video.currentTime = (updatedTime >= 0) ? updatedTime : 0
+    displayIcon(leftIcon, "<p>-10s</p>", 2000)
 })
 
 forwardBtn.addEventListener("click", () => {
     let updatedTime = video.currentTime + 10
     video.currentTime = (updatedTime <= video.duration) ? updatedTime : video.duration
+    displayIcon(rightIcon, "<p>+10s</p>", 2000)
 })
 
 let volumeLevel = localStorage.getItem("volume") ?? 100
@@ -259,7 +365,7 @@ volumeSeekBar.addEventListener("input", () => {
     video.volume = (volumeLevel) / 100
     localStorage.setItem("volume", volumeLevel)
     updateVolumeIcon(volumeLevel)
-
+    displayIcon(centreIcon, `<p>${volumeLevel}%</p>`, 2000)
 })
 
 volumeBtn.addEventListener("click", () => {
@@ -279,8 +385,6 @@ document.addEventListener("fullscreenchange", () => {
         fullscreenIcon.src = "site_media/expand-solid-full.svg"
     }
 });
-
-
 
 
 /* Playlist for series */
@@ -321,7 +425,42 @@ if (series) {
             card.classList.add("watchingCard")
             card.classList.remove("card")
             cardLabel.style.color = "black"
-
+            subtitlesLoaded = false
+            clearSubtitleTracks(video)
+            initSubtitles(videoUrl)
+            subtitlesLoaded = true
         })
     }
 }
+
+
+/* Subtitle Handling */
+let dataset = {}
+fetch(`./database.json?timestamp=${new Date().getTime()}`, {
+    cache: 'no-store',
+    headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+    }
+})
+    .then((response) => response.json())
+    .then((data) => {
+        dataset = Object(data)
+        initSubtitles(videoUrl)
+    })
+
+captionBtn.addEventListener("click", () => {
+    if (!subtitlesLoaded) {
+        return
+    }
+    if (subtitleState) {
+        subtitleState = false
+        captionImg.src = "site_media/caption-off.svg"
+        offSubttiles(video)
+    } else {
+        subtitleState = true
+        captionImg.src = "site_media/caption-on.svg"
+        switchSubtitle(video, currentSubtitleLabel)
+    }
+})

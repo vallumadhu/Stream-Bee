@@ -32,6 +32,7 @@ main {
     flex-direction: column;
     align-items: center;
     transition: all 300ms ease;
+    z-index: 12;
 }
 
 .show {
@@ -123,7 +124,7 @@ main {
     justify-content: flex-start;
 }
 
-.volumeControls:hover.volumeControls input{
+.volumeControls:hover.volumeControls input {
     opacity: 1;
     width: 150px;
 }
@@ -157,13 +158,14 @@ main {
     border: none;
 }
 
-.transportControls{
+.transportControls {
     display: flex;
     justify-content: center;
 }
 
 .transportControls button,
-.volumeBtn,.otherControls button {
+.volumeBtn,
+.otherControls button {
     border: none;
     width: 40px;
     height: 40px;
@@ -178,20 +180,22 @@ main {
 }
 
 
-.transportControls button:active,#fullscreenBtn:active {
+.transportControls button:active,
+#fullscreenBtn:active {
     scale: 0.95;
 }
 
 .transportControls button img,
-.volumeBtn img,.otherControls button img {
+.volumeBtn img,
+.otherControls button img {
     width: 80%;
     height: 80%;
     pointer-events: none;
 }
 
-.otherControls{
+.otherControls {
     display: flex;
-    justify-content: space-between;
+    justify-content: right;
 }
 
 .loading {
@@ -272,4 +276,56 @@ main {
 
 .playlistBox .card {
     background: rgba(255, 255, 255, 0.168);
+}
+
+.displayIconBox {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 11;
+}
+
+.displayIconBox div {
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+}
+
+
+.displayIconBox .right,
+.displayIconBox .left {
+    background-color: rgba(0, 0, 0, 0.412);
+    min-width: 100px;
+    height: 100%;
+    transition: 300ms ease;
+}
+.displayIconBox .right{
+    border-top-left-radius: 100%;
+    border-bottom-left-radius: 100%;
+}
+.displayIconBox .left{
+    border-top-right-radius: 100%;
+    border-bottom-right-radius: 100%;
+}
+
+.displayIconBox .centre{
+    background-color: rgba(0, 0, 0, 0.47);
+}
+
+.displayIconBox p {
+    text-align: center;
+    font-weight: 800;
+    font-size: 3rem;
+    color: rgb(225, 225, 225);
+}
+
+
+video::cue {
+    background: rgba(14, 14, 14, 0.5);
+    color: rgb(255, 255, 255);
 }
