@@ -18,6 +18,11 @@ main {
     margin-bottom: 50px;
 }
 
+.videoBox img {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
 .videoBox video {
     width: 100%;
 }
@@ -304,17 +309,21 @@ main {
     height: 100%;
     transition: 300ms ease;
 }
-.displayIconBox .right{
+
+.displayIconBox .right {
     border-top-left-radius: 100%;
     border-bottom-left-radius: 100%;
 }
-.displayIconBox .left{
+
+.displayIconBox .left {
     border-top-right-radius: 100%;
     border-bottom-right-radius: 100%;
 }
 
-.displayIconBox .centre{
+.displayIconBox .centre {
     background-color: rgba(0, 0, 0, 0.47);
+    border-radius: 10px;
+    padding: 15px;
 }
 
 .displayIconBox p {
@@ -328,4 +337,56 @@ main {
 video::cue {
     background: rgba(14, 14, 14, 0.5);
     color: rgb(255, 255, 255);
+}
+
+.settingsBox {
+    min-width: 400px;
+    height: 220px;
+    z-index: 15;
+    bottom: 80px;
+    background-color: rgba(0, 0, 0, 0.686);
+    border-radius: 5px;
+    right: 0px;
+    display: flex;
+    justify-content: space-between;
+    transition: 300ms ease;
+    position: absolute;
+}
+
+.otherControls {
+    position: relative;
+}
+
+.settingsBox div {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 20px;
+}
+
+.settingName {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.settingsBox ul {
+    list-style: none;
+    column-count: 2;
+    column-gap: 10px;
+    overflow-y: auto;
+}
+
+.settingsBox ul::-webkit-scrollbar {
+    display: none;
+}
+
+.settingsBox ul li {
+    break-inside: avoid;
+    padding: 5px;
+    cursor: pointer;
+    color: #cacaca;
+}
+#settingIcon{
+    transition: 300ms ease;
 }

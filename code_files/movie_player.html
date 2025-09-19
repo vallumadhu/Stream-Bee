@@ -11,6 +11,7 @@
     @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
   </style>
 </head>
+
 <body>
   <header>
     <a href="index.html">
@@ -51,8 +52,7 @@
           </div>
           <div class="transportControls">
             <button id="backwardBtn">
-              <img src="site_media/forward icon.svg" alt="" style="transform: rotateY(180deg);"
->
+              <img src="site_media/forward icon.svg" alt="" style="transform: rotateY(180deg);">
             </button>
             <button id="playBtn">
               <img id="playIcon" src="site_media/play-solid-full.svg" alt="">
@@ -62,8 +62,23 @@
             </button>
           </div>
           <div class="otherControls">
-            <button id="settingBtn">
-              <img src="site_media/setting_icon.svg" alt="">
+            <button id="settingBtn" style="padding: 0;">
+              <img src="site_media/setting_icon.svg" alt="" style="padding: 0; margin: 0;" id="settingIcon">
+              <div class="settingsBox hide">
+                <div>
+                  <p class="settingName">Audio</p>
+                  <ul class="audioList">
+                    <li style="color: white;">Original</li>
+                  </ul>
+                </div>
+                <div>
+                  <p class="settingName">Subtitle</p>
+                  <ul class="subtitleList">
+                    <li>None</li>
+                  </ul>
+                </div>
+
+              </div>
             </button>
             <button id="captionBtn">
               <img src="site_media/caption-off.svg" id="captionImg" alt="">

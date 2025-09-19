@@ -21,6 +21,10 @@ const rightIcon = document.querySelector(".right")
 const captionBtn = document.getElementById("captionBtn")
 const captionImg = document.getElementById("captionImg")
 const settingBtn = document.getElementById("settingBtn")
+const settingsBox = document.querySelector(".settingsBox")
+const subtitleList = document.querySelector(".subtitleList")
+const audioList = document.querySelector(".audioList")
+const settingIcon = document.getElementById("settingIcon")
 let subtitles = []
 let currentSubtitleLabel = null
 let subtitleState = false
@@ -194,11 +198,38 @@ function initSubtitles(videoUrl) {
         addSubtitleTrack(video, subtitleURL, subtitleName)
         subtitlesLoaded = true
     }
-    if(!currentSubtitleLabel){
+    if (!currentSubtitleLabel || !subtitles.includes(currentSubtitleLabel)) {
         currentSubtitleLabel = subtitles[0]
     }
     if (subtitleState) {
         switchSubtitle(video, currentSubtitleLabel)
+    }
+    subtitleList.innerHTML = ""
+    let subtitlesCount = subtitles.length
+    subtitleList.style.columnCount = Math.floor(subtitlesCount / 6) + 1
+    if (subtitlesCount == 0) {
+        const li = document.createElement("li")
+        li.innerHTML = "None"
+        subtitleList.appendChild(li)
+    }
+    let currentSubtitleIndex = subtitles.indexOf(currentSubtitleLabel)
+    for (let i = 0; i < subtitlesCount; i++) {
+        const li = document.createElement("li")
+        if (i == currentSubtitleIndex) {
+            li.style.color = "white"
+            li.style.fontWeight = 600
+        }
+        li.innerHTML = subtitles[i]
+        subtitleList.appendChild(li)
+        li.addEventListener("click", () => {
+            let prevLi = subtitleList.children[subtitles.indexOf(currentSubtitleLabel)]
+            prevLi.style.color = "#cacaca"
+            prevLi.style.fontWeight = 400
+            currentSubtitleLabel = subtitles[i]
+            switchSubtitle(video, currentSubtitleLabel)
+            li.style.color = "white"
+            li.style.fontWeight = 600
+        })
     }
 }
 
@@ -429,6 +460,11 @@ if (series) {
             clearSubtitleTracks(video)
             initSubtitles(videoUrl)
             subtitlesLoaded = true
+            if (subtitleState) {
+                setTimeout(() => {
+                    switchSubtitle(video, currentSubtitleLabel);
+                }, 100);
+            }
         })
     }
 }
@@ -462,5 +498,26 @@ captionBtn.addEventListener("click", () => {
         subtitleState = true
         captionImg.src = "site_media/caption-on.svg"
         switchSubtitle(video, currentSubtitleLabel)
+    }
+
+})
+
+settingBtn.addEventListener("click", () => {
+    if (settingsBox.classList.contains("show")) {
+        settingIcon.style.transform = "rotate(0deg)"
+        settingsBox.classList.remove("show")
+        settingsBox.classList.add("hide")
+        settingsBox.style.transform = "translateX(-200px)";
+        setTimeout(() => {
+            if (settingsBox.classList.contains("hide"))
+                settingsBox.style.display = "none"
+        }, 300)
+        
+    } else {
+        settingsBox.style.transform = "translateX(0px)";
+        settingIcon.style.transform = "rotate(45deg)"
+        settingsBox.style.display = "flex"
+        settingsBox.classList.add("show")
+        settingsBox.classList.remove("hide")
     }
 })
