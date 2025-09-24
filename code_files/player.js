@@ -25,6 +25,8 @@ const settingsBox = document.querySelector(".settingsBox")
 const subtitleList = document.querySelector(".subtitleList")
 const audioList = document.querySelector(".audioList")
 const settingIcon = document.getElementById("settingIcon")
+const theaterBtn = document.getElementById("theaterBtn")
+let isTheater = false
 let subtitles = []
 let currentSubtitleLabel = null
 let subtitleState = false
@@ -92,6 +94,8 @@ function playPause() {
         video.pause()
         playIcon.src = "site_media/play-solid-full.svg"
         isPlaying = false
+        controls.classList.add("show")
+        controls.classList.remove("hide")
     } else {
         video.play()
         playIcon.src = "site_media/pause-solid-full.svg"
@@ -233,6 +237,23 @@ function initSubtitles(videoUrl) {
     }
 }
 
+const theaterFunction = () => {
+    if (isTheater) {
+        document.querySelector("main").classList.remove("theater_mode_main")
+        videoBox.classList.remove("theater_mode_videoBox")
+        playlistBox.classList.remove("theater_mode_playlist")
+        video.classList.remove("theater_mode_video")
+        video.style.width = "100%"
+        isTheater = false;
+    } else {
+        document.querySelector("main").classList.add("theater_mode_main")
+        videoBox.classList.add("theater_mode_videoBox")
+        playlistBox.classList.add("theater_mode_playlist")
+        video.classList.add("theater_mode_video")
+        video.style.width = "auto"
+        isTheater = true;
+    }
+}
 
 let centreIconTimeout = null
 let rightIconTimeout = null
@@ -300,11 +321,26 @@ video.addEventListener("canplay", () => {
 })
 
 /* Play Pause Controls */
+let controlsHideTimeout;
 videoBox.addEventListener("click", () => {
     playPause()
 })
 
 videoBox.addEventListener("mouseover", () => {
+    clearTimeout(controlsHideTimeout)
+    controlsHideTimeout = setTimeout(() => {
+        controls.classList.remove("show")
+        controls.classList.add("hide")
+    }, 5000)
+    controls.classList.add("show")
+    controls.classList.remove("hide")
+})
+videoBox.addEventListener("mousemove", () => {
+    clearTimeout(controlsHideTimeout)
+    controlsHideTimeout = setTimeout(() => {
+        controls.classList.remove("show")
+        controls.classList.add("hide")
+    }, 5000)
     controls.classList.add("show")
     controls.classList.remove("hide")
 })
@@ -355,9 +391,15 @@ document.addEventListener("keydown", (e) => {
         let ratio = (keyCode - 96) * 0.1
         let updatedTime = video.duration * ratio
         video.currentTime = updatedTime
+    } else if (keyCode == 84){
+        theaterFunction()
+    } else if(keyCode == 67){
+        captionBtn.click()
     }
 })
 
+/* Theater Mode */
+theaterBtn.addEventListener("click",theaterFunction )
 
 /* Seekbar Control */
 seekbar.addEventListener("input", (e) => {
@@ -512,7 +554,7 @@ settingBtn.addEventListener("click", () => {
             if (settingsBox.classList.contains("hide"))
                 settingsBox.style.display = "none"
         }, 300)
-        
+
     } else {
         settingsBox.style.transform = "translateX(0px)";
         settingIcon.style.transform = "rotate(45deg)"

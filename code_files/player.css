@@ -355,6 +355,7 @@ video::cue {
 
 .otherControls {
     position: relative;
+    align-items: center;
 }
 
 .settingsBox div {
@@ -372,7 +373,6 @@ video::cue {
 
 .settingsBox ul {
     list-style: none;
-    column-count: 2;
     column-gap: 10px;
     overflow-y: auto;
 }
@@ -389,4 +389,31 @@ video::cue {
 }
 #settingIcon{
     transition: 300ms ease;
+}
+.displayIconBox p{
+    user-select: none;
+}
+
+#theaterBtn {
+    width: 35px;
+    height: 20px;
+    border: 3px solid white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.theater_mode_videoBox{
+    width: 100vw;
+    height: 85vh;
+}
+.theater_mode_main{
+    flex-direction: column;
+}
+.theater_mode_playlist{
+    width: 90%;
+    margin: auto;
+}
+
+.theater_mode_video{
+    height: 100%;
 }
