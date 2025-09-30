@@ -12,7 +12,6 @@ main {
     align-items: center;
     border-radius: 5px;
     overflow: hidden;
-    box-shadow: 1px 1px 100px rgb(34, 34, 34);
     position: relative;
     justify-content: center;
     margin-bottom: 50px;
@@ -235,17 +234,19 @@ main {
     overflow-y: auto;
     padding: 15px;
     flex-direction: column;
-    background-color: rgb(29, 29, 29);
+    background-color: rgb(21 21 21);
     border-radius: 7px;
     margin-right: 25px;
+    font-weight: 600;
 }
+
 
 .playlistBox::-webkit-scrollbar {
     width: 2px;
 }
 
 .playlistBox::-webkit-scrollbar-thumb {
-    background: rgb(255, 255, 255);
+    background: #e9e9e9;
     border-radius: 10px;
 }
 
@@ -280,7 +281,7 @@ main {
 }
 
 .playlistBox .card {
-    background: rgba(255, 255, 255, 0.168);
+    background: rgb(126 126 126 / 17%);
 }
 
 .displayIconBox {
@@ -351,6 +352,7 @@ video::cue {
     justify-content: space-between;
     transition: 300ms ease;
     position: absolute;
+    transform: translateX(-1000px);
 }
 
 .otherControls {
@@ -387,10 +389,12 @@ video::cue {
     cursor: pointer;
     color: #cacaca;
 }
-#settingIcon{
+
+#settingIcon {
     transition: 300ms ease;
 }
-.displayIconBox p{
+
+.displayIconBox p {
     user-select: none;
 }
 
@@ -402,18 +406,41 @@ video::cue {
     cursor: pointer;
 }
 
-.theater_mode_videoBox{
+.theater_mode_videoBox {
     width: 100vw;
     height: 85vh;
 }
-.theater_mode_main{
+
+.theater_mode_main {
     flex-direction: column;
 }
-.theater_mode_playlist{
+
+.theater_mode_playlist {
+    flex-direction: row;
     width: 90%;
+    margin: auto;
+    width: 100%;
+    border-radius: 0px;
+    scrollbar-width: 1px;
+}
+
+.theater_mode_playlist::-webkit-scrollbar {
+    height: 1px;
+}
+
+.theater_mode_playlist div {
+    min-width: 170px;
+    min-height: 75px;
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    text-align: center;
+}
+
+.theater_mode_playlist div p {
     margin: auto;
 }
 
-.theater_mode_video{
+.theater_mode_video {
     height: 100%;
 }

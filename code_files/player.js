@@ -39,8 +39,14 @@ function updateSeekbar() {
     seekbar.value = video.currentTime
     let percentage = (video.currentTime / video.duration) * 100
     seekbar.style.backgroundImage = `linear-gradient(to right, rgb(255, 255, 255) ${percentage}%, rgba(0, 0, 0, 0.603) 0%)`
-    if (percentage == 100) {
-        /*HAVE TO WRITE AUTOPLAY CODE*/
+    if (percentage == 100 && series) {
+        console.log(1)
+        let urls = url.split(",")
+        let currentURLindex = urls.indexOf(videoUrl)
+        if (currentURLindex < urls.length - 1) {
+            let nextCard = playlistBox.children[currentURLindex + 1];
+            if (nextCard) nextCard.click();
+        }
     }
     if (video.currentTime % 5) {
 
@@ -139,9 +145,12 @@ function mute() {
     volumeIcon.src = "site_media/volume-xmark-solid-full.svg"
 }
 
-function addSubtitleTrack(video, subtitleURL, subtitleName) {
+function addSubtitleTrack(video, subtitleURL, subtitleName, currentSubtitleLabel) {
     const track = document.createElement("track");
     track.kind = "subtitles"
+    track.default = (subtitleName === currentSubtitleLabel)
+    track.mode = "disabled"
+    track.default = false
     track.label = subtitleName
     track.src = subtitleURL
     video.appendChild(track)
@@ -174,9 +183,10 @@ function switchSubtitle(video, subtitleName) {
     for (let i = 0; i < video.textTracks.length; i++) {
         video.textTracks[i].mode = video.textTracks[i].label == subtitleName ? "showing" : "disabled";
     }
+    localStorage.setItem("currentSubtitleLabel", subtitleName)
 }
 
-function offSubttiles(video) {
+function offSubtitles(video) {
     for (let i = 0; i < video.textTracks.length; i++) {
         video.textTracks[i].mode = "disabled"
     }
@@ -184,7 +194,7 @@ function offSubttiles(video) {
 
 
 function clearSubtitleTracks(video) {
-    offSubttiles(video)
+    offSubtitles(video)
     const tracks = video.querySelectorAll("track")
     for (let i = 0; i < tracks.length; i++) {
         let track = tracks[i]
@@ -193,17 +203,20 @@ function clearSubtitleTracks(video) {
 }
 
 function initSubtitles(videoUrl) {
+    clearSubtitleTracks(video)
     let videoSubtitles = getSubtitles(videoUrl)
     subtitles = []
     for (let i = 0; i < videoSubtitles.length; i++) {
         let subtitleName = videoSubtitles[i][0]
         let subtitleURL = videoSubtitles[i][1]
         subtitles.push(subtitleName)
-        addSubtitleTrack(video, subtitleURL, subtitleName)
+        addSubtitleTrack(video, subtitleURL, subtitleName, currentSubtitleLabel)
         subtitlesLoaded = true
     }
+    offSubtitles(video)
     if (!currentSubtitleLabel || !subtitles.includes(currentSubtitleLabel)) {
         currentSubtitleLabel = subtitles[0]
+        localStorage.setItem("currentSubtitleLabel", currentSubtitleLabel)
     }
     if (subtitleState) {
         switchSubtitle(video, currentSubtitleLabel)
@@ -253,6 +266,7 @@ const theaterFunction = () => {
         video.style.width = "auto"
         isTheater = true;
     }
+    localStorage.setItem("isTheater", isTheater)
 }
 
 let centreIconTimeout = null
@@ -275,6 +289,10 @@ function displayIcon(icon, content, duration) {
 }
 
 /*local Storage*/
+
+isTheater = JSON.parse(localStorage.getItem("isTheater") || "false")
+subtitleState = JSON.parse(localStorage.getItem("subtitleState") || "false")
+currentSubtitleLabel = localStorage.getItem("currentSubtitleLabel") || null
 const name = localStorage.getItem("name");
 let url = localStorage.getItem("url");
 const series = JSON.parse(localStorage.getItem("series"))
@@ -391,15 +409,15 @@ document.addEventListener("keydown", (e) => {
         let ratio = (keyCode - 96) * 0.1
         let updatedTime = video.duration * ratio
         video.currentTime = updatedTime
-    } else if (keyCode == 84){
+    } else if (keyCode == 84) {
         theaterFunction()
-    } else if(keyCode == 67){
+    } else if (keyCode == 67) {
         captionBtn.click()
     }
 })
 
 /* Theater Mode */
-theaterBtn.addEventListener("click",theaterFunction )
+theaterBtn.addEventListener("click", theaterFunction)
 
 /* Seekbar Control */
 seekbar.addEventListener("input", (e) => {
@@ -535,13 +553,13 @@ captionBtn.addEventListener("click", () => {
     if (subtitleState) {
         subtitleState = false
         captionImg.src = "site_media/caption-off.svg"
-        offSubttiles(video)
+        offSubtitles(video)
     } else {
         subtitleState = true
         captionImg.src = "site_media/caption-on.svg"
         switchSubtitle(video, currentSubtitleLabel)
     }
-
+    localStorage.setItem("subtitleState", subtitleState)
 })
 
 settingBtn.addEventListener("click", () => {
@@ -563,3 +581,14 @@ settingBtn.addEventListener("click", () => {
         settingsBox.classList.remove("hide")
     }
 })
+
+document.addEventListener("DOMContentLoaded", () => {
+    isTheater = !isTheater
+    theaterFunction()
+    if (subtitleState) {
+        captionImg.src = "site_media/caption-on.svg"
+        setTimeout(() => {
+            switchSubtitle(video, currentSubtitleLabel);
+        }, 100);
+    }
+});
